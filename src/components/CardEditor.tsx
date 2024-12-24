@@ -2,14 +2,11 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toPng } from "html-to-image";
-import { jsPDF } from "jspdf";
-import vCard from "vcf";
 import { QRCodeSVG } from "qrcode.react";
 import BusinessCard from "./BusinessCard";
-import { toast } from "sonner";
 import { Download, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { exportAsImage, exportAsVCard, exportAsPDF } from "./ExportUtils";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
@@ -50,101 +47,6 @@ export default function CardEditor() {
         }));
       };
       reader.readAsDataURL(file);
-    }
-  };
-
-  const exportAsImage = async () => {
-    try {
-      // Export all sides
-      const sides = [];
-      for (let i = 0; i < 3; i++) {
-        setCurrentSide(i);
-        const cardElement = document.getElementById("business-card");
-        if (!cardElement) continue;
-        const imageData = await toPng(cardElement);
-        sides.push(imageData);
-      }
-      
-      // Create a container for all sides
-      const canvas = document.createElement("canvas");
-      canvas.width = 1500;
-      canvas.height = 300;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      // Load and draw all sides
-      const images = await Promise.all(sides.map(side => {
-        const img = new Image();
-        img.src = side;
-        return new Promise<HTMLImageElement>((resolve) => {
-          img.onload = () => resolve(img);
-        });
-      }));
-
-      images.forEach((img, index) => {
-        ctx.drawImage(img, index * 500, 0, 500, 300);
-      });
-
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL();
-      link.download = "business-card.png";
-      link.click();
-      toast.success("Business card exported as image!");
-    } catch (error) {
-      toast.error("Failed to export image");
-    }
-  };
-
-  const exportAsVCard = () => {
-    try {
-      const card = new vCard();
-      card.add("fn", formData.name);
-      card.add("title", formData.title);
-      card.add("email", formData.email);
-      card.add("tel", formData.phone);
-      card.add("url", formData.website);
-      card.add("org", formData.company);
-      card.add("adr", formData.address);
-      card.add("note", `Specialties: ${formData.specialties}\nServices: ${formData.services}`);
-      
-      const vcfData = card.toString();
-      const blob = new Blob([vcfData], { type: "text/vcard" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "business-card.vcf";
-      link.click();
-      toast.success("Contact card exported!");
-    } catch (error) {
-      toast.error("Failed to export contact card");
-    }
-  };
-
-  const exportAsPDF = async () => {
-    try {
-      const sides = [];
-      for (let i = 0; i < 3; i++) {
-        setCurrentSide(i);
-        const cardElement = document.getElementById("business-card");
-        if (!cardElement) continue;
-        const imageData = await toPng(cardElement);
-        sides.push(imageData);
-      }
-
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: [300, 1500],
-      });
-
-      sides.forEach((side, index) => {
-        if (index > 0) pdf.addPage();
-        pdf.addImage(side, "PNG", 0, 0, 500, 300);
-      });
-
-      pdf.save("business-card.pdf");
-      toast.success("Business card exported as PDF!");
-    } catch (error) {
-      toast.error("Failed to export PDF");
     }
   };
 
@@ -233,13 +135,24 @@ export default function CardEditor() {
           <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Export Options</h3>
             <div className="flex flex-wrap gap-3">
-              <Button onClick={exportAsImage} className="flex items-center gap-2">
+              <Button 
+                onClick={() => exportAsImage({ formData, setCurrentSide })} 
+                className="flex items-center gap-2"
+              >
                 <Download size={16} /> Export as Image
               </Button>
-              <Button onClick={exportAsPDF} variant="secondary" className="flex items-center gap-2">
+              <Button 
+                onClick={() => exportAsPDF({ formData, setCurrentSide })} 
+                variant="secondary" 
+                className="flex items-center gap-2"
+              >
                 <Download size={16} /> Export as PDF
               </Button>
-              <Button onClick={exportAsVCard} variant="outline" className="flex items-center gap-2">
+              <Button 
+                onClick={() => exportAsVCard(formData)} 
+                variant="outline" 
+                className="flex items-center gap-2"
+              >
                 <Share2 size={16} /> Export Contact
               </Button>
             </div>

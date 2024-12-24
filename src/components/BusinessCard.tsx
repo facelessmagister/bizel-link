@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Twitter, Linkedin, MessageCircle, Send, BrandTiktok } from "lucide-react";
 
 interface BusinessCardProps {
   profilePic: string;
@@ -65,15 +66,43 @@ export default function BusinessCard({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          {website && <p className="text-gray-600 text-sm">🌐 {website}</p>}
-          {address && <p className="text-gray-600 text-sm">📍 {address}</p>}
-          {linkedin && <p className="text-gray-600 text-sm">💼 {linkedin}</p>}
-          {twitter && <p className="text-gray-600 text-sm">🐦 {twitter}</p>}
+          {website && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <span>🌐</span> {website}
+            </div>
+          )}
+          {address && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <span>📍</span> {address}
+            </div>
+          )}
+          {linkedin && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <Linkedin className="w-4 h-4" /> {linkedin}
+            </div>
+          )}
+          {twitter && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <Twitter className="w-4 h-4" /> {twitter}
+            </div>
+          )}
         </div>
         <div className="space-y-2">
-          {whatsapp && <p className="text-gray-600 text-sm">📱 {whatsapp}</p>}
-          {telegram && <p className="text-gray-600 text-sm">📬 {telegram}</p>}
-          {tiktok && <p className="text-gray-600 text-sm">🎵 {tiktok}</p>}
+          {whatsapp && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <MessageCircle className="w-4 h-4" /> {whatsapp}
+            </div>
+          )}
+          {telegram && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <Send className="w-4 h-4" /> {telegram}
+            </div>
+          )}
+          {tiktok && (
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
+              <BrandTiktok className="w-4 h-4" /> {tiktok}
+            </div>
+          )}
         </div>
       </div>
     </div>
