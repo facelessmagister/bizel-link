@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Twitter, Linkedin, MessageCircle, Send, TiktokIcon } from "lucide-react";
+import { Twitter, Linkedin, MessageCircle, Send, Video } from "lucide-react";
 
 interface BusinessCardProps {
   profilePic: string;
@@ -100,7 +100,7 @@ export default function BusinessCard({
           )}
           {tiktok && (
             <div className="flex items-center gap-2 text-gray-600 text-sm">
-              <TiktokIcon className="w-4 h-4" /> {tiktok}
+              <Video className="w-4 h-4" /> {tiktok}
             </div>
           )}
         </div>
